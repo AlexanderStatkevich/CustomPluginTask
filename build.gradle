@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'java-gradle-plugin'
+}
+
+group 'ru.clevertec'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+
+
+gradlePlugin {
+    website = 'https://github.com/AlexanderStatkevich/CustomPluginTask'
+    vcsUrl = 'https://github.com/AlexanderStatkevich/CustomPluginTask.git'
+    plugins {
+        taskPlugin {
+            id = 'ru.clevertec.plugin-project'
+            displayName = 'Plugin for compatibility testing of Gradle plugins'
+            description = 'A plugin that helps you test your plugin against a variety of Gradle versions'
+            tags.addAll('testing', 'integrationTesting', 'compatibility')
+            implementationClass = 'ru.clevertec.plugin.TaskPlugin'
+        }
+    }
+}
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = 'plugin-project'
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name 'nexus'
+            allowInsecureProtocol(true)
+            url project.repoUrl
+            credentials {
+                username project.repoUser
+                password project.repoPassword
+            }
+        }
+    }
+}
+
+
